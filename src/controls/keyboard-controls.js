@@ -40,6 +40,7 @@ module.exports = AFRAME.registerComponent('keyboard-controls', {
       blur: this.onBlur.bind(this)
     };
     this.attachEventListeners();
+    this.keyType = -1;
   },
 
   /*******************************************************************
@@ -56,10 +57,10 @@ module.exports = AFRAME.registerComponent('keyboard-controls', {
 
     this.dVelocity.set(0, 0, 0);
     if (data.enabled) {
-      if (keys.KeyW || keys.ArrowUp)    { this.dVelocity.z -= 1; }
-      if (keys.KeyA || keys.ArrowLeft)  { this.dVelocity.x -= 1; }
-      if (keys.KeyS || keys.ArrowDown)  { this.dVelocity.z += 1; }
-      if (keys.KeyD || keys.ArrowRight) { this.dVelocity.x += 1; }
+      if (keys.KeyW || keys.ArrowUp)    { this.dVelocity.z -= 1; this.keyType = 0; }
+      if (keys.KeyA || keys.ArrowLeft)  { this.dVelocity.x -= 1; this.keyType = 2; }
+      if (keys.KeyS || keys.ArrowDown)  { this.dVelocity.z += 1; this.keyType = 1;}
+      if (keys.KeyD || keys.ArrowRight) { this.dVelocity.x += 1; this.keyType = 3;}
     }
 
     return this.dVelocity.clone();

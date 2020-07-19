@@ -5,8 +5,8 @@
  */
 
 const COMPONENT_SUFFIX = '-controls',
-    MAX_DELTA = 0.2, // ms
-    EPS = 10e-6;
+  MAX_DELTA = 0.2, // ms
+  EPS = 10e-6;
 
 module.exports = AFRAME.registerComponent('movement-controls', {
 
@@ -17,12 +17,12 @@ module.exports = AFRAME.registerComponent('movement-controls', {
   dependencies: ['rotation'],
 
   schema: {
-    enabled:            { default: true },
-    controls:           { default: ['gamepad', 'trackpad', 'keyboard', 'touch'] },
-    speed:              { default: 0.3, min: 0 },
-    fly:                { default: false },
+    enabled: { default: true },
+    controls: { default: ['gamepad', 'trackpad', 'keyboard', 'touch'] },
+    speed: { default: 0.3, min: 0 },
+    fly: { default: false },
     constrainToNavMesh: { default: false },
-    camera:             { default: '[movement-controls] [camera]', type: 'selector' }
+    camera: { default: '[movement-controls] [camera]', type: 'selector' }
   },
 
   /*******************************************************************
@@ -110,7 +110,7 @@ module.exports = AFRAME.registerComponent('movement-controls', {
       }
 
       if (data.constrainToNavMesh
-          && velocityCtrl.isNavMeshConstrained !== false) {
+        && velocityCtrl.isNavMeshConstrained !== false) {
 
         if (velocity.lengthSq() < EPS) return;
 
@@ -124,11 +124,24 @@ module.exports = AFRAME.registerComponent('movement-controls', {
         this.navGroup = this.navGroup === null ? nav.getGroup(start) : this.navGroup;
         this.navNode = this.navNode || nav.getNode(start, this.navGroup);
         this.navNode = nav.clampStep(start, end, this.navGroup, this.navNode, clampedEnd);
-        el.object3D.position.copy(clampedEnd);
+
+        if (velocityCtrl.keyType === 0) {
+          el.object3D.position.copy(clampedEnd);
+        }
+        else if (velocityCtrl.keyType === 1) {
+          el.object3D.position.copy(clampedEnd);
+        }
+        else if (velocityCtrl.keyType === 2) {
+          el.object3D.rotation.y += Math.PI / 120;
+        }
+        else if (velocityCtrl.keyType === 3) {
+          el.object3D.rotation.y -= Math.PI / 120;
+        }
+
       } else if (el.hasAttribute('velocity')) {
         el.setAttribute('velocity', velocity);
       } else {
-        el.object3D.position.x += velocity.x * dt / 1000;
+        // el.object3D.position.x += velocity.x * dt / 1000;
         el.object3D.position.y += velocity.y * dt / 1000;
         el.object3D.position.z += velocity.z * dt / 1000;
       }

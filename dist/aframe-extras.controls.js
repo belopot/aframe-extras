@@ -1260,6 +1260,7 @@ module.exports = AFRAME.registerComponent('keyboard-controls', {
       blur: this.onBlur.bind(this)
     };
     this.attachEventListeners();
+    this.keyType = -1;
   },
 
   /*******************************************************************
@@ -1277,16 +1278,16 @@ module.exports = AFRAME.registerComponent('keyboard-controls', {
     this.dVelocity.set(0, 0, 0);
     if (data.enabled) {
       if (keys.KeyW || keys.ArrowUp) {
-        this.dVelocity.z -= 1;
+        this.dVelocity.z -= 1;this.keyType = 0;
       }
       if (keys.KeyA || keys.ArrowLeft) {
-        this.dVelocity.x -= 1;
+        this.dVelocity.x -= 1;this.keyType = 2;
       }
       if (keys.KeyS || keys.ArrowDown) {
-        this.dVelocity.z += 1;
+        this.dVelocity.z += 1;this.keyType = 1;
       }
       if (keys.KeyD || keys.ArrowRight) {
-        this.dVelocity.x += 1;
+        this.dVelocity.x += 1;this.keyType = 3;
       }
     }
 
@@ -1505,11 +1506,20 @@ module.exports = AFRAME.registerComponent('movement-controls', {
         this.navGroup = this.navGroup === null ? nav.getGroup(start) : this.navGroup;
         this.navNode = this.navNode || nav.getNode(start, this.navGroup);
         this.navNode = nav.clampStep(start, end, this.navGroup, this.navNode, clampedEnd);
-        el.object3D.position.copy(clampedEnd);
+
+        if (velocityCtrl.keyType === 0) {
+          el.object3D.position.copy(clampedEnd);
+        } else if (velocityCtrl.keyType === 1) {
+          el.object3D.position.copy(clampedEnd);
+        } else if (velocityCtrl.keyType === 2) {
+          el.object3D.rotation.y += Math.PI / 120;
+        } else if (velocityCtrl.keyType === 3) {
+          el.object3D.rotation.y -= Math.PI / 120;
+        }
       } else if (el.hasAttribute('velocity')) {
         el.setAttribute('velocity', velocity);
       } else {
-        el.object3D.position.x += velocity.x * dt / 1000;
+        // el.object3D.position.x += velocity.x * dt / 1000;
         el.object3D.position.y += velocity.y * dt / 1000;
         el.object3D.position.z += velocity.z * dt / 1000;
       }
